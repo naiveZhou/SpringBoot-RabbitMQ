@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: rabbitmq-service
+  rabbitmq:
+    addresses: 127.0.0.1:5672
+    username: guest
+    password: guest
+    publisher-returns: true
+    publisher-confirms: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        default-requeue-rejected: false
+        concurrency: 1
+        max-concurrency: 1
+        prefetch: 1
+        retry:
+          enabled: true
+server:
+  port: 8080
+  tomcat:
+    max-connections: 10000
+    max-threads: 1000
