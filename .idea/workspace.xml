@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="25a90e1e-76f5-42f2-8d36-9f4123436511" name="Default Changelist" comment="" />
+    <list default="true" id="25a90e1e-76f5-42f2-8d36-9f4123436511" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/config/QueueConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/config/QueueConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/config/Send.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/config/Send.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/doem/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/doem/Consumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/doem/RabbitMqContronller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rabbitmq/doem/RabbitMqContronller.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,13 +80,35 @@
       <option name="presentableId" value="Default" />
       <updated>1565852735601</updated>
       <workItem from="1565852747617" duration="12093000" />
+      <workItem from="1565920813151" duration="1638000" />
     </task>
+    <task id="LOCAL-00001" summary="1.0">
+      <created>1565920885849</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1565920885849</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="SHOW_DIRTY_RECURSIVELY" value="true" />
+    <MESSAGE value="1.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.0" />
   </component>
 </project>

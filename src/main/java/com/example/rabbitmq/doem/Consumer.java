@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 
 /**
- * @Title
+ * @消息队列消费者
  * @Autor zxf
  * @Date 2019/8/15
  */
@@ -38,6 +38,24 @@ public class Consumer {
             byte[] body = message.getBody();
             String json = new String(body);
             log.info("queue_2收到消息 : " + json);
+            //手动ACK
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 当死信队列的消息过期后,会通过死信交换机把过期消息发送到这里
+     * @param message
+     * @param channel
+     */
+    @RabbitListener(queues = "consumer_bead_queue")
+    public void simplConsumer3(Message message, com.rabbitmq.client.Channel channel){
+        try {
+            byte[] body = message.getBody();
+            String json = new String(body);
+            log.info("consumer_bead_queue收到消息 : " + json);
             //手动ACK
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (IOException e) {

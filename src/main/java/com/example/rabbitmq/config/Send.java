@@ -11,7 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-
+/**
+ * @消息队列发送工具类
+ * @Autor zxf
+ * @Date 2019/8/15
+ */
 @Component
 public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 
@@ -27,6 +31,9 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
 
     //主题模式交换机
     private static final String TOPIC_EXCHANGE = "topic_exchange";
+
+    //死信交换机
+    private static final String BEAD_EXCHANGE = "bead_exchange";
 
     //队列1
     private static final String QUEUE_1 = "queue_1";
@@ -78,6 +85,15 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
     public void topicSend(String routingKey, String json) {
         Message message = this.setMessage(json);
         this.rabbitTemplate.convertAndSend(TOPIC_EXCHANGE, routingKey, message);
+    }
+
+    /**
+     * 死信模式发送,用于定时任务处理
+     *  @param routingKey
+     * @param message
+     */
+    public void beadSend(String routingKey, Message message) {
+        this.rabbitTemplate.convertAndSend(BEAD_EXCHANGE, routingKey, message);
     }
 
     /**
