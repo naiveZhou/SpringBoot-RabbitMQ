@@ -23,7 +23,7 @@ work模式：一个生产者，多个消费者，每个消费者获取到的消�
 
 topic模式：将路由键和某模式进行匹配，此时队列需要绑定在一个模式上，“#”匹配一个词或多个词，“*”只匹配一个词。
 
-新增RabbitMQ死信队列
+# 新增RabbitMQ死信队列
 
 RabbitMQ要实现延时任务，需要使用RabbitMQ的死信交换机（Exchange）和消息的存活时间TTL（Time To Live）来实现
 
