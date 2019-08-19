@@ -20,42 +20,6 @@ public class QueueConfig {
 
     private  static final Logger logger = LoggerFactory.getLogger(QueueConfig.class);
 
-    //队列1
-    private static final String QUEUE_1 = "queue_1";
-
-    //队列2
-    private static final String QUEUE_2 = "queue_2";
-
-    //死信队列
-    private static final String BEAD_QUEUE = "bead_queue";
-
-    //处理死信队列
-    private static final String CONSUMER_BEAD_QUEUE = "consumer_bead_queue";
-
-    //死信交换机
-    private static final String BEAD_EXCHANGE = "bead_exchange";
-
-    //订阅模式交换机
-    private static final String FANOUT_EXCHANGE = "fanout_exchange";
-
-    //路由模式交换机
-    private static final String DIRECT_EXCHANGE = "direct_exchange";
-
-    //主题模式交换机
-    private static final String TOPIC_EXCHANGE = "topic_exchange";
-
-    //路由键routing_key1
-    private static final String ROUTING_KEY1 = "routing_key1";
-
-    //路由键routing_key2
-    private static final String ROUTING_KEY2 = "routing_key2";
-
-    //符号*匹配一个词
-    private static final String TOPIC_ROUTINGKEY1 = "hello.*";
-
-    //符号#匹配一个或多个词
-    private static final String TOPIC_ROUTINGKEY2 = "hello.#";
-
 
     /**
      *  创建订阅模式交换机
@@ -63,7 +27,7 @@ public class QueueConfig {
      */
     @Bean
     public FanoutExchange fanoutExchange() {
-        return new FanoutExchange(FANOUT_EXCHANGE,true, false);
+        return new FanoutExchange(RabbitMQConstant.FANOUT_EXCHANGE,true, false);
     }
 
     /**
@@ -72,7 +36,7 @@ public class QueueConfig {
      */
     @Bean
     public DirectExchange directExchange() {
-        return new DirectExchange(DIRECT_EXCHANGE,true, false);
+        return new DirectExchange(RabbitMQConstant.DIRECT_EXCHANGE,true, false);
     }
 
     /**
@@ -81,7 +45,7 @@ public class QueueConfig {
      */
     @Bean
     public TopicExchange topicExchange() {
-        return new TopicExchange(TOPIC_EXCHANGE,true, false);
+        return new TopicExchange(RabbitMQConstant.TOPIC_EXCHANGE,true, false);
     }
 
     /**
@@ -90,7 +54,7 @@ public class QueueConfig {
      */
     @Bean
     public DirectExchange deadExchange() {
-        return new DirectExchange(BEAD_EXCHANGE, true, false);
+        return new DirectExchange(RabbitMQConstant.DEAD_EXCHANGE, true, false);
     }
 
     /**
@@ -101,9 +65,9 @@ public class QueueConfig {
     public Queue BeadQueue() {
         Map<String, Object> arguments = new HashMap<>(2);
         // 死信路由到死信交换器DLX
-        arguments.put("x-dead-letter-exchange", BEAD_EXCHANGE);
-        arguments.put("x-dead-letter-routing-key", ROUTING_KEY2);
-        return new Queue(BEAD_QUEUE, true, false, false, arguments);
+        arguments.put("x-dead-letter-exchange", RabbitMQConstant.DEAD_EXCHANGE);
+        arguments.put("x-dead-letter-routing-key", RabbitMQConstant.ROUTING_KEY2);
+        return new Queue(RabbitMQConstant.DEAD_QUEUE, true, false, false, arguments);
 
     }
 
@@ -113,7 +77,7 @@ public class QueueConfig {
      */
     @Bean
     public Queue consumerBeadQueue() {
-        return new Queue(CONSUMER_BEAD_QUEUE, true); // 队列持久
+        return new Queue(RabbitMQConstant.CONSUMER_BEAD_QUEUE, true); // 队列持久
 
     }
 
@@ -124,7 +88,7 @@ public class QueueConfig {
     @Bean
     public Queue Queue1() {
         //队列持久化
-        return new Queue(QUEUE_1, true);
+        return new Queue(RabbitMQConstant.QUEUE_1, true);
     }
 
     /**
@@ -133,7 +97,7 @@ public class QueueConfig {
      */
     @Bean
     public Queue Queue2() {
-        return new Queue(QUEUE_2, true);
+        return new Queue(RabbitMQConstant.QUEUE_2, true);
     }
 
     /**
@@ -160,7 +124,7 @@ public class QueueConfig {
      */
     @Bean
     public Binding directBinding1() {
-        return BindingBuilder.bind(Queue1()).to(directExchange()).with(ROUTING_KEY1);
+        return BindingBuilder.bind(Queue1()).to(directExchange()).with(RabbitMQConstant.ROUTING_KEY1);
     }
 
     /**
@@ -169,7 +133,7 @@ public class QueueConfig {
      */
     @Bean
     public Binding directBinding2() {
-        return BindingBuilder.bind(Queue2()).to(directExchange()).with(ROUTING_KEY2);
+        return BindingBuilder.bind(Queue2()).to(directExchange()).with(RabbitMQConstant.ROUTING_KEY2);
     }
 
     /**
@@ -179,7 +143,7 @@ public class QueueConfig {
      */
     @Bean
     public Binding topicBinding1() {
-        return BindingBuilder.bind(Queue1()).to(topicExchange()).with(TOPIC_ROUTINGKEY1);
+        return BindingBuilder.bind(Queue1()).to(topicExchange()).with(RabbitMQConstant.TOPIC_ROUTINGKEY1);
     }
 
     /**
@@ -189,7 +153,7 @@ public class QueueConfig {
      */
     @Bean
     public Binding topicBinding2() {
-        return BindingBuilder.bind(Queue2()).to(topicExchange()).with(TOPIC_ROUTINGKEY2);
+        return BindingBuilder.bind(Queue2()).to(topicExchange()).with(RabbitMQConstant.TOPIC_ROUTINGKEY2);
     }
 
 
@@ -200,7 +164,7 @@ public class QueueConfig {
      */
     @Bean
     public Binding beadQueuebinding() {
-        return BindingBuilder.bind(BeadQueue()).to(deadExchange()).with(ROUTING_KEY1);
+        return BindingBuilder.bind(BeadQueue()).to(deadExchange()).with(RabbitMQConstant.ROUTING_KEY1);
     }
 
     /**
@@ -210,6 +174,6 @@ public class QueueConfig {
      */
     @Bean
     public Binding consumerBeadQueuebinding() {
-        return BindingBuilder.bind(consumerBeadQueue()).to(deadExchange()).with(ROUTING_KEY2);
+        return BindingBuilder.bind(consumerBeadQueue()).to(deadExchange()).with(RabbitMQConstant.ROUTING_KEY2);
     }
 }

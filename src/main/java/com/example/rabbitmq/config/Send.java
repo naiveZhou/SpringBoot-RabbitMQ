@@ -23,21 +23,6 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
 
     private RabbitTemplate rabbitTemplate;
 
-    //订阅模式交换机
-    private static final String FANOUT_EXCHANGE = "fanout_exchange";
-
-    //路由模式交换机
-    private static final String DIRECT_EXCHANGE = "direct_exchange";
-
-    //主题模式交换机
-    private static final String TOPIC_EXCHANGE = "topic_exchange";
-
-    //死信交换机
-    private static final String BEAD_EXCHANGE = "bead_exchange";
-
-    //队列1
-    private static final String QUEUE_1 = "queue_1";
-
     @Autowired
     public Send(RabbitTemplate rabbitTemplate) {
         super();
@@ -54,7 +39,7 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
     public void routeSend(String json) {
         Message message = this.setMessage(json);
         //在fanoutExchange中在绑定Q到X上时，会自动把Q的名字当作bindingKey。
-        this.rabbitTemplate.convertAndSend(FANOUT_EXCHANGE, "", message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.FANOUT_EXCHANGE, "", message);
     }
 
     /**
@@ -63,7 +48,7 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
      */
     public void simplSend(String json) {
         Message message = this.setMessage(json);
-        this.rabbitTemplate.convertAndSend(QUEUE_1, message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.QUEUE_1, message);
     }
 
     /**
@@ -73,7 +58,7 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
      */
     public void routingSend(String routingKey, String json) {
         Message message = this.setMessage(json);
-        this.rabbitTemplate.convertAndSend(DIRECT_EXCHANGE, routingKey, message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.DIRECT_EXCHANGE, routingKey, message);
     }
 
     /**
@@ -84,7 +69,7 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
      */
     public void topicSend(String routingKey, String json) {
         Message message = this.setMessage(json);
-        this.rabbitTemplate.convertAndSend(TOPIC_EXCHANGE, routingKey, message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.TOPIC_EXCHANGE, routingKey, message);
     }
 
     /**
@@ -93,7 +78,7 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
      * @param message
      */
     public void beadSend(String routingKey, Message message) {
-        this.rabbitTemplate.convertAndSend(BEAD_EXCHANGE, routingKey, message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.DEAD_EXCHANGE, routingKey, message);
     }
 
     /**

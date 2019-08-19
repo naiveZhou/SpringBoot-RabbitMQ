@@ -1,5 +1,6 @@
 package com.example.rabbitmq.doem;
 
+import com.example.rabbitmq.config.RabbitMQConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -19,7 +20,7 @@ public class Consumer {
 
     private  static final Logger log = LoggerFactory.getLogger(Consumer.class);
 
-    @RabbitListener(queues = "queue_1")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_1)
     public void simplConsumer1(Message message, com.rabbitmq.client.Channel channel){
         try {
             byte[] body = message.getBody();
@@ -32,7 +33,7 @@ public class Consumer {
         }
     }
 
-    @RabbitListener(queues = "queue_2")
+    @RabbitListener(queues = RabbitMQConstant.QUEUE_2)
     public void simplConsumer2(Message message, com.rabbitmq.client.Channel channel){
         try {
             byte[] body = message.getBody();
@@ -50,7 +51,7 @@ public class Consumer {
      * @param message
      * @param channel
      */
-    @RabbitListener(queues = "consumer_bead_queue")
+    @RabbitListener(queues = RabbitMQConstant.CONSUMER_BEAD_QUEUE)
     public void simplConsumer3(Message message, com.rabbitmq.client.Channel channel){
         try {
             byte[] body = message.getBody();
