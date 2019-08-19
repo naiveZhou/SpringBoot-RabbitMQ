@@ -51,10 +51,10 @@ public class QueueConfig {
     private static final String ROUTING_KEY2 = "routing_key2";
 
     //符号*匹配一个词
-    public static final String TOPIC_ROUTINGKEY1 = "hello.*";
+    private static final String TOPIC_ROUTINGKEY1 = "hello.*";
 
     //符号#匹配一个或多个词
-    public static final String TOPIC_ROUTINGKEY2 = "hello.#";
+    private static final String TOPIC_ROUTINGKEY2 = "hello.#";
 
 
     /**
