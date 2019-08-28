@@ -54,7 +54,7 @@ public class RabbitMQSend implements RabbitTemplate.ConfirmCallback, RabbitTempl
      */
     public void simplSend(String json) {
         Message message = this.setMessage(json);
-        this.rabbitTemplate.convertAndSend(RabbitMQConstant.QUEUE_1, message);
+        this.rabbitTemplate.convertAndSend(RabbitMQConstant.QUEUE_1, message, new CorrelationData("123456"));
     }
 
     /**
@@ -108,32 +108,10 @@ public class RabbitMQSend implements RabbitTemplate.ConfirmCallback, RabbitTempl
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-        if (correlationData != null) {
-            log.info("ConfirmCallback ack: {} correlationData: {} cause: {}", ack, correlationData, cause);
-            String msgId = correlationData.getId();
-            CorrelationDataExt ext = (CorrelationDataExt) correlationData;
-            Coordinator coordinator = (Coordinator) applicationContext.getBean(ext.getCoordinator());
-            coordinator.confirmCallback(correlationData, ack);
-            // 如果发送到交换器成功，但是没有匹配的队列（比如说取消了绑定），ack返回值为还是true（这里是一个坑，需要注意）
-            if (ack && !coordinator.getReturnCallback(msgId)) {
-                log.info("The message has been successfully delivered to the queue, correlationData:{}", correlationData);
-                coordinator.delReady(msgId);
-            } else {
-                //失败了判断重试次数，重试次数大于0则继续发送
-                if (ext.getMaxRetries() > 0) {
-                    try {
-                        this.setCorrelationData(msgId, ext.getCoordinator(), ext.getMessage(),
-                                ext.getMaxRetries() - 1);
-                        this.rabbitTemplate.convertAndSend(ext.getMessage().getExchangeName(),
-                                ext.getMessage().getRoutingKey(), ext.getMessage().getData());
-                    } catch (Exception e) {
-                        log.error("Message retry failed to send, message:{} exception: ", ext.getMessage(), e);
-                    }
-                } else {
-                    log.error("Message delivery failed, msgId: {}, cause: {}", msgId, cause);
-                }
-            }
-            coordinator.delReturnCallback(msgId);
+        if(ack){
+            log.info("发送成功");
+        }else{
+            log.info("发送失败");
         }
     }
 
