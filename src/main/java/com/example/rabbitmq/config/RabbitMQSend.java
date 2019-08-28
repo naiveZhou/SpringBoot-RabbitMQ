@@ -8,6 +8,7 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
@@ -17,14 +18,19 @@ import org.springframework.stereotype.Component;
  * @Date 2019/8/15
  */
 @Component
-public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
+public class RabbitMQSend implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnCallback {
 
-    private  static final Logger log = LoggerFactory.getLogger(Send.class);
+    private  static final Logger log = LoggerFactory.getLogger(RabbitMQSend.class);
 
     private RabbitTemplate rabbitTemplate;
 
+    private MqProperties config;
+
     @Autowired
-    public Send(RabbitTemplate rabbitTemplate) {
+    ApplicationContext applicationContext;
+
+    @Autowired
+    public RabbitMQSend(RabbitTemplate rabbitTemplate) {
         super();
         this.rabbitTemplate = rabbitTemplate;
         this.rabbitTemplate.setMandatory(true);
@@ -102,10 +108,32 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-        if (ack) {
-            log.info("消息发送确认成功");
-        } else {
-            log.info("消息发送失败:" + cause);
+        if (correlationData != null) {
+            log.info("ConfirmCallback ack: {} correlationData: {} cause: {}", ack, correlationData, cause);
+            String msgId = correlationData.getId();
+            CorrelationDataExt ext = (CorrelationDataExt) correlationData;
+            Coordinator coordinator = (Coordinator) applicationContext.getBean(ext.getCoordinator());
+            coordinator.confirmCallback(correlationData, ack);
+            // 如果发送到交换器成功，但是没有匹配的队列（比如说取消了绑定），ack返回值为还是true（这里是一个坑，需要注意）
+            if (ack && !coordinator.getReturnCallback(msgId)) {
+                log.info("The message has been successfully delivered to the queue, correlationData:{}", correlationData);
+                coordinator.delReady(msgId);
+            } else {
+                //失败了判断重试次数，重试次数大于0则继续发送
+                if (ext.getMaxRetries() > 0) {
+                    try {
+                        this.setCorrelationData(msgId, ext.getCoordinator(), ext.getMessage(),
+                                ext.getMaxRetries() - 1);
+                        this.rabbitTemplate.convertAndSend(ext.getMessage().getExchangeName(),
+                                ext.getMessage().getRoutingKey(), ext.getMessage().getData());
+                    } catch (Exception e) {
+                        log.error("Message retry failed to send, message:{} exception: ", ext.getMessage(), e);
+                    }
+                } else {
+                    log.error("Message delivery failed, msgId: {}, cause: {}", msgId, cause);
+                }
+            }
+            coordinator.delReturnCallback(msgId);
         }
     }
 
@@ -121,13 +149,15 @@ public class Send implements RabbitTemplate.ConfirmCallback, RabbitTemplate.Retu
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
         log.info("return--message:" + new String(message.getBody()) + ",replyCode:" + replyCode + ",replyText:"
                 + replyText + ",exchange:" + exchange + ",routingKey:" + routingKey);
-        try {
-            Thread.sleep(10000L);
-            // TODO 重新发送消息至队列,此处应写一套重发机制,重发多少次结束,否则如果消息如果一直发送失败,则会一直发下去!
-            this.rabbitTemplate.convertAndSend(exchange, routingKey, message);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
+
+    /**
+     * 扩展消息的CorrelationData，方便在回调中应用
+     */
+    public void setCorrelationData(String bizId, String coordinator, EventMessage msg, Integer retry) {
+        rabbitTemplate.setCorrelationDataPostProcessor(((message, correlationData) ->
+                new CorrelationDataExt(bizId, coordinator,
+                        retry == null ? config.getDistributed().getCommitMaxRetries() : retry, msg)));
     }
 }
 

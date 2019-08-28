@@ -1,6 +1,6 @@
 package com.example.rabbitmq.doem;
 
-import com.example.rabbitmq.config.Send;
+import com.example.rabbitmq.config.RabbitMQSend;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RabbitMqContronller {
 
-    private final Send send;
+    private final RabbitMQSend send;
 
     @Autowired
-    public RabbitMqContronller(Send send) {
+    public RabbitMqContronller(RabbitMQSend send) {
         this.send = send;
     }
 
